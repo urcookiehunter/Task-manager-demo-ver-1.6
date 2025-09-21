@@ -1,0 +1,179 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Login - Task Manager (Demo)</title>
+  <style>
+    :root{
+      --accent:#0b63ff;
+      --bg:#f2f6fb;
+      --card:#ffffff;
+      --muted:#6b7280;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, 'Segoe UI', Roboto, Arial;
+      background: linear-gradient(180deg, #eef6ff 0%, var(--bg) 100%);
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+    }
+
+    .login-card{
+      width:100%;
+      max-width:420px;
+      background:var(--card);
+      border-radius:14px;
+      box-shadow:0 10px 30px rgba(11,99,255,0.08);
+      padding:28px;
+    }
+
+    .brand{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-bottom:6px;
+    }
+    .brand img{height:48px;width:48px;border-radius:10px;object-fit:cover}
+    .brand h1{font-size:18px;margin:0}
+
+    h2{color:var(--accent);margin:12px 0 18px 0;font-size:22px}
+
+    .note{color:var(--muted);font-size:14px;margin-bottom:18px}
+
+    label{display:block;font-size:13px;margin-bottom:6px;color:#333;font-weight:600}
+    input[type="email"], input[type="password"]{
+      width:100%;
+      padding:12px 14px;
+      border-radius:10px;
+      border:1px solid #e6eef9;
+      margin-bottom:14px;
+      font-size:14px;
+      background:#fbfdff;
+    }
+
+    .row{
+      display:flex;gap:10px;
+    }
+    .btn{
+      appearance:none;border:0;padding:12px 14px;border-radius:10px;cursor:pointer;font-weight:700;
+    }
+    .btn-primary{background:var(--accent);color:#fff;flex:1}
+    .btn-ghost{background:transparent;border:1px solid rgba(11,99,255,0.12);color:var(--accent);flex:1}
+
+    .links{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:14px}
+    .links a{color:var(--accent);text-decoration:none;font-weight:600;cursor:pointer}
+    .links a.disabled{color:var(--muted);cursor:default;text-decoration:none;font-weight:600;opacity:0.9}
+
+    .message{
+      margin-top:14px;padding:10px;border-radius:8px;font-weight:700;display:none;
+    }
+    .message.success{background:rgba(16,185,129,0.12);color:#059669}
+    .message.error{background:rgba(239,68,68,0.08);color:#b91c1c}
+
+    .small{font-size:13px;color:var(--muted);margin-top:10px}
+    footer{margin-top:14px;text-align:center;font-size:13px;color:var(--muted)}
+  </style>
+</head>
+<body>
+    
+  <div class="login-card" role="main">
+    <div class="brand">
+      <img src="https://via.placeholder.com/96x96.png?text=TM" alt="Task Manager logo">
+      <div>
+        <h1>Task Manager</h1>
+        <div style="font-size:12px;color:var(--muted)">Student edition — Demo</div>
+      </div>
+    </div>
+
+    <h2>Welcome back 👋</h2>
+    <div class="note">Log in to organize your school tasks and stay on top of deadlines.</div>
+
+    <form id="loginForm" autocomplete="off">
+      <label for="email">Email or Username</label>
+      <input id="email" type="email" placeholder="you@example.com or admin" required>
+
+      <label for="password">Password</label>
+      <input id="password" type="password" placeholder="Password" required>
+
+      <div class="row">
+        <button class="btn btn-primary" id="loginBtn" type="submit">Login</button>
+        <button class="btn btn-ghost" id="demoCreds" type="button" title="Show demo credentials">Demo</button>
+      </div>
+
+      <div class="links">
+        <a id="forgot" href="#">Forgot Password?</a>
+        <a id="signup" href="#">Sign Up</a>
+      </div>
+
+      <div id="msg" class="message" role="status" aria-live="polite"></div>
+
+      <div class="small">Demo credentials: <strong>admin</strong> / <strong>1234</strong></div>
+    </form>
+
+    <footer> © 2025 Task Manager — Demo only</footer>
+  </div>
+
+  <script>
+    // Demo credentials (frontend-only). Do NOT use in production.
+    const DEMO_USER = 'example@gmail.com';
+    const DEMO_PASS = '1234';
+
+    const form = document.getElementById('loginForm');
+    const emailInput = document.getElementById('email');
+    const passInput = document.getElementById('password');
+    const msg = document.getElementById('msg');
+    const forgot = document.getElementById('forgot');
+    const signup = document.getElementById('signup');
+    const demoBtn = document.getElementById('demoCreds');
+
+    // Show alert for forgot/signup (not implemented)
+    forgot.addEventListener('click', function (e) {
+      e.preventDefault();
+      alert('Forgot Password is not available yet — coming soon (demo).');
+    });
+    signup.addEventListener('click', function (e) {
+      e.preventDefault();
+      alert('Sign Up is not available in the demo yet. Stay tuned!');
+    });
+
+    // Fill demo creds when Demo button clicked
+    demoBtn.addEventListener('click', function () {
+      emailInput.value = DEMO_USER;
+      passInput.value = DEMO_PASS;
+      passInput.focus();
+    });
+
+    // Handle login (frontend-only)
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      msg.style.display = 'none';
+      const u = emailInput.value.trim();
+      const p = passInput.value;
+
+      // Accept either exact username 'admin' OR an email that starts with admin@
+      const userMatches = u === DEMO_USER || u.toLowerCase().startsWith(DEMO_USER + '@');
+
+      if (userMatches && p === DEMO_PASS) {
+        msg.textContent = 'Login successful — redirecting to your dashboard...';
+        msg.className = 'message success';
+        msg.style.display = 'block';
+
+        // Simulate a redirect (demo). Replace with real redirect in production.
+        setTimeout(() => {
+          // Simulated dashboard page - you can change this to an actual page.
+          window.location.href = 'dashboard.html';
+        }, 900);
+      } else {
+        msg.textContent = 'Invalid credentials. Use demo: admin / 1234';
+        msg.className = 'message error';
+        msg.style.display = 'block';
+      }
+    });
+  </script>
+</body>
+</html>
